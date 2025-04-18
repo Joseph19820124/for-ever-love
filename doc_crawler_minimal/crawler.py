@@ -6,7 +6,7 @@ from pathlib import Path
 
 DOCS = {
     "langchain": "https://docs.langchain.com/docs/",
-    "langgraph": "https://docs.langgraph.dev/",
+    "langgraph": "https://langchain-ai.github.io/langgraph/",
     "pydantic": "https://docs.pydantic.dev/latest/"
 }
 
