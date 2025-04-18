@@ -1,5 +1,5 @@
 from langgraph.graph import StateGraph, END
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.agents import Tool
 from tools import add_numbers, multiply_numbers
 from schema import MathInput
