@@ -26,7 +26,7 @@ llm = ChatOpenAI(model="gpt-4.1-nano", temperature=0)
 
 def agent_executor(state: AgentState) -> AgentState:
     user_input = state['input']
-    response = llm.invoke(f"User said: {user_input}. Use a tool if needed.")
+    response = llm.invoke(f"User said: 请相加 {user_input}. Use a tool if needed.")
     return {"input": user_input, "output": response.content}
 
 builder = StateGraph(AgentState)
