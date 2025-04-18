@@ -12,7 +12,7 @@ class AgentState(TypedDict):
 tools = [
     Tool.from_function(
         name="add_numbers",
-        description="Adds two integers",
+        description="将两个整数相加",
         func=lambda x: add_numbers(MathInput.parse_raw(x)),
     ),
     Tool.from_function(
@@ -26,7 +26,7 @@ llm = ChatOpenAI(model="gpt-4.1-nano", temperature=0)
 
 def agent_executor(state: AgentState) -> AgentState:
     user_input = state['input']
-    response = llm.invoke(f"User said: Please add two integers: {user_input}. Use a tool if needed.")
+    response = llm.invoke(f"User said: 请把两个整数加起来: {user_input}. Use a tool if needed.")
     return {"input": user_input, "output": response.content}
 
 builder = StateGraph(AgentState)
