@@ -3,6 +3,7 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import Tool
 from tools import add_numbers, multiply_numbers
 from schema import MathInput
+from typing import TypedDict
 
 class AgentState(TypedDict):
     input: str
