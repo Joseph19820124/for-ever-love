@@ -4,12 +4,11 @@ import requests
 from typing import List
 from pydantic import BaseModel
 from langgraph.graph import StateGraph, END
-from langgraph.prebuilt import ToolExecutor
-from langchain_core.tools import tool
+from langchain_core.tools import Tool
 from langchain_core.messages import ToolMessage
 
 # 设置 API Key
-os.environ["XAI_API_KEY"] = "your_api_key_here"
+os.environ["XAI_API_KEY"] = "your-xai-api-key"
 
 # 定义状态模型
 class AgentState(BaseModel):
@@ -33,36 +32,33 @@ def call_model(state: AgentState) -> dict:
     return {"messages": [result["choices"][0]["text"]]}
 
 # 工具定义
-@tool
 def search(query: str) -> str:
-    return "搜索结果：示例内容"
+    return f"搜索结果：你搜索了 {query}"
 
-tools = [search]
-tool_executor = ToolExecutor(tools)
+tools = [
+    Tool(
+        name="search",
+        func=search,
+        description="用于搜索信息的工具"
+    )
+]
 
 # 工具调用节点
 def call_tool(state: AgentState) -> dict:
     last_message = state.messages[-1]
-    tool_call = last_message.tool_calls[0]
-    action = {
-        "tool": tool_call["name"],
-        "tool_input": tool_call["args"],
-    }
-    response = tool_executor.invoke(action)
-    tool_message = ToolMessage(
-        content=str(response),
-        name=action["tool"],
-        tool_call_id=tool_call["id"]
-    )
-    return {"messages": [tool_message]}
+    if "搜索" in last_message:
+        response = search(last_message)
+        return {"messages": [response]}
+    else:
+        return {"messages": ["未调用工具，继续流程。"]}
 
 # 决策节点
 def should_continue(state: AgentState) -> str:
     last_message = state.messages[-1]
-    if not last_message.tool_calls:
-        return "end"
-    else:
+    if "搜索" in last_message:
         return "continue"
+    else:
+        return "end"
 
 # 构建图
 workflow = StateGraph(AgentState)
@@ -75,6 +71,6 @@ app = workflow.compile()
 
 # 运行示例
 if __name__ == "__main__":
-    initial_state = AgentState(messages=["你好，世界！"])
+    initial_state = AgentState(messages=["搜索LangGraph的资料"])
     result = app.invoke(initial_state)
     print(result)
