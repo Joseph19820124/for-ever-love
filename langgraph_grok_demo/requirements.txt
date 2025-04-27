@@ -1,0 +1,5 @@
+
+langgraph
+pydantic
+requests
+langchain-core
